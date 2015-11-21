@@ -34,8 +34,9 @@ NinjaPacker.prototype.setOptions = function (opts) {
   this.output = common.getUrl(opts.output);
   this.namespace = opts.namespace;
 
-  this.common = opts.common || {}
+  this.common = opts.common || {};
   this.common.namespace = this.common.namespace || this.namespace;
+  this.common.exports = 'ninja';
 
   this.head = opts.head || 'ninja';
   this.shim = opts.shim || '';
