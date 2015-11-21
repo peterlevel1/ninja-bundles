@@ -1,0 +1,27 @@
+{
+  "name": "ninja-bundles",
+  "version": "1.0.0",
+  "author": "Peter <jserfun@163.com>",
+  "license": "MIT",
+  "description": "simple but powerful tools in frontend work flow",
+  "keywords": [
+    "loader",
+    "amd",
+    "cmd",
+    "umd",
+    "frontend pack"
+  ],
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peterlevel1/ninja-bundles.git"
+  },
+  "bugs": "https://github.com/peterlevel1/ninja-bundles/issues",
+  "dependencies": {
+    "async": "^1.4.0",
+    "ejs": "^2.3.4",
+    "jade": "^1.11.0",
+    "uglify-js": "^2.4.24"
+  },
+  "devDependencies": {}
+}

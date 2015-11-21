@@ -1,0 +1,13 @@
+<% if (!minify) { %>
+{
+url: <%- $filename %>,
+deps: <%- children %>,
+factory: function(require, module, exports) {
+<%- factory %>
+}
+}
+<% } else { %>
+function(require, module, exports) {
+<%- factory %>
+}
+<% }  %>

@@ -1,0 +1,24 @@
+*.gem
+.sass-cache
+bootstrap.css
+bootstrap-responsive.css
+Gemfile.lock
+*.gemfile.lock
+.rvmrc
+.rbenv-version
+
+bower.json
+.bowerrc
+assets/config.rb
+
+# Ignore bundler config
+/.bundle
+/vendor/cache
+/vendor/bundle
+tmp/
+test/screenshots/
+test/dummy_rails/log/*.log
+test/dummy_rails/public/assets/
+.DS_Store
+node_modules
+npm-debug.log
