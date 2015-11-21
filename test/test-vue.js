@@ -1,8 +1,10 @@
 var NinjaPacker = require('../libs/ninja-packer.js');
+var src = '../node_modules/vue/src';
+var entry = src + '/vue.js';
 
 new NinjaPacker({
-  src: './vue',
-  entry: './vue/vue.js',
+  src: src,
+  entry: entry,
   output: './cache/1.js',
   namespace: 'Vue',
   common : {},
@@ -10,8 +12,8 @@ new NinjaPacker({
   done: function () {
     console.log('done-1');
     this.setOptions({
-      src: './vue',
-      entry: './vue/vue.js',
+      src: src,
+      entry: entry,
       output: './cache/2.js',
       namespace: 'Vue',
       packMode: 2,

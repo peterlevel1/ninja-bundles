@@ -23,5 +23,7 @@
     "jade": "^1.11.0",
     "uglify-js": "^2.4.24"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "vue" : "^0.12.16"
+  }
 }
