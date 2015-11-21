@@ -1,4 +1,4 @@
-var NinjaPacker = require('../ninja-packer.js');
+var NinjaPacker = require('../libs/ninja-packer.js');
 
 new NinjaPacker({
   src: './vue',
