@@ -83,11 +83,18 @@ NinjaPacker.prototype.getCommonFile = function ($filename) {
 };
 
 NinjaPacker.prototype.getRequireUrl = function (url) {
+  var testUrl = addExtOrNot(url);
+
+  var index = this.files.indexOf(testUrl);
+  if (index === -1)
+    throw new Error('no this dep file: ' + testUrl);
+
+  var commonFile = this.getCommonFile(url);
   return this.packMode === NinjaPacker.MODE_NORMAL
-    ? this.getCommonFile(url)
+    ? commonFile
     : this.packMode === NinjaPacker.MODE_MINIFY
-    ? this.files.indexOf(addExtOrNot(url))
-    : this.getCommonFile(url);
+    ? index
+    : commonFile;
 };
 
 NinjaPacker.onDir = function (dirname) {
@@ -109,50 +116,59 @@ NinjaPacker.onFile = function (filename, next) {
   });
 };
 
-NinjaPacker.onDone = function () {
+NinjaPacker.prototype.getBufs = function () {
   var self = this;
 
-  var targetIndex;
-  self.files.forEach(function (filename, index) {
-    if (filename === self.entry)
-      targetIndex = index;
-  });
-  if (targetIndex == null) {
-    self.walking = false;
-    return self.error(new Error('no entry file for output'));
-  }
-  self.files.unshift(self.files.splice(targetIndex, 1));
-
-  var commonString = common(self.common);
-  var bufs = [];
-
-  self.files.forEach(function (filename, index) {
+  return self.files.map(function (filename, index) {
     var file = self.map[filename];
+
     var factory = file.str.replace(requireRE, function (all, a, b, c) {
       var one = common.getUrl(b, file.dirname);
+
       if (~self.dirs.indexOf(one)) {
         one = path.join(one, 'index');
         if (!~self.files.indexOf(one + '.js'))
           throw new Error('no file for index.js: ' + one);
       }
+
       one = self.getRequireUrl(one);
       file.children.push(one);
       return a + one + c;
     });
+
     var item = itemFn({
-      $filename : '"' + self.getRequireUrl(self.getCommonFile(file.$filename)) + '"',
+      $filename : '"' + self.getRequireUrl(file.$filename) + '"',
       children : JSON.stringify(file.children, null, 2),
       factory : factory,
       minify : self.packMode === NinjaPacker.MODE_MINIFY
     });
-    bufs.push(item);
-  });
 
+    return item;
+  });
+};
+
+NinjaPacker.onDone = function () {
+  var self = this;
+  self.walking = false;
+
+  var targetIndex = self.files.indexOf(self.entry);
+  if (targetIndex == -1) {
+    return self.error(new Error('no entry file for output'));
+  }
+  self.files.unshift(self.files.splice(targetIndex, 1)[0]);
+
+  var bufs;
+  try {
+    bufs = self.getBufs();
+  } catch (err) {
+    return self.error(err);
+  }
+
+  var commonString = common(self.common);
   var mods = '[' + bufs.join(',\n') + ']';
   var target = defineFn({ modules: mods });
   commonString.push(self.shim, target, commonString.tail);
   fs.writeFile(self.output, commonString.join(''), function (err) {
-    self.walking = false;
     if (err)
       return self.error(err);
     self.done();
@@ -191,7 +207,7 @@ function getCommonFile(url, base, head) {
 }
 
 function addExtOrNot(url) {
-  return !/\.(js)$/.test(url)
+  return !(/\.js$/.test(url))
     ? url + '.js'
     : url;
 }
